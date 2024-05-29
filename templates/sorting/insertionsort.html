@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Algorithm Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction:column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #E0E0E0;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+        #sort-info {
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        #sort-info span {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .code-section {
+            margin: 20px;
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .code {
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="sort-info">
+        <span>Sorting Algorithm: Insertion Sort</span>
+        <br>
+        <span>Explanation:</span> Insertion Sort is a simple sorting algorithm that builds the final sorted array one item at a time. It takes each element from the unsorted portion of the array and places it in its correct position within the sorted portion of the array.
+        <br>
+        <span>Time Complexity:</span> O(n^2)
+    </div>
+
+    <div class="code-section">
+        <span>Python Code:</span>
+        <div class="code">
+            def insertion_sort(arr):
+                for i in range(1, len(arr)):
+                    key = arr[i]
+                    j = i - 1
+                    while j >= 0 and key < arr[j]:
+                        arr[j + 1] = arr[j]
+                        j -= 1
+                    arr[j + 1] = key
+
+            # Example usage
+            arr = [64, 34, 25, 12, 22, 11, 90]
+            insertion_sort(arr)
+            print("Sorted array:", arr)
+        </div>
+    </div>
+
+    <div id="controls">
+        <label for="speed">Speed:</label>
+        <input type="range" id="speed" name="speed" min="1" max="10" value="5">
+        <span id="speed-display">5</span>
+    </div>
+
+    <script>
+        let values = [];
+        let w = 10;
+        let sorting = true;
+
+        function setup() {
+            createCanvas(800, 400);
+            values = new Array(floor(width / w));
+            for (let i = 0; i < values.length; i++) {
+                values[i] = random(height);
+            }
+            frameRate(5); // Initial frame rate
+            insertionSort(values);
+        }
+
+        async function insertionSort(arr) {
+            while (true) {
+                if (sorting) {
+                    for (let i = 1; i < arr.length; i++) {
+                        let key = arr[i];
+                        let j = i - 1;
+                        while (j >= 0 && arr[j] > key) {
+                            arr[j + 1] = arr[j];
+                            j = j - 1;
+                            await sleep(1100 - document.getElementById("speed").value * 100); // Adjust delay based on speed
+                            redraw();
+                        }
+                        arr[j + 1] = key;
+                    }
+                    sorting = false; // Sort complete
+                } else {
+                    await sleep(100); // Pause the loop
+                }
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function draw() {
+            background(224);
+            for (let i = 0; i < values.length; i++) {
+                stroke(0);
+                fill(76, 175, 80);
+                rect(i * w, height - values[i], w, values[i]);
+            }
+        }
+
+        document.getElementById("speed").addEventListener("input", function() {
+            document.getElementById("speed-display").innerText = this.value;
+        });
+    </script>
+</body>
+</html>

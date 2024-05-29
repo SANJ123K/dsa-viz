@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Traversal Visualization</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #E0E0E0;
+        }
+        #graph-info {
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        #graph-info span {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        #controls {
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: green;
+            border: none;
+            border-radius: 10px;
+            color: white;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        canvas {
+            border: 2px solid #000;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .code-section {
+            margin: 20px;
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .code {
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="graph-info">
+        <span>Graph Traversal</span>
+        <br>
+        <span>Explanation:</span> This visualization demonstrates Breadth-First Search (BFS) and Depth-First Search (DFS) traversal on a randomly generated graph.
+        <br>
+        <span>Operations:</span>
+        <ul>
+            <li><strong>Generate Random Graph:</strong> Generates a random graph with the specified number of nodes and edge probability.</li>
+            <li><strong>BFS Traversal:</strong> Performs Breadth-First Search (BFS) traversal on the generated graph starting from node 0.</li>
+            <li><strong>DFS Traversal:</strong> Performs Depth-First Search (DFS) traversal on the generated graph starting from node 0.</li>
+        </ul>
+    </div>
+
+   <div class="code-section">
+        <span>Python Code:</span>
+        <div class="code">
+            # Python code for generating random graph and traversal
+            import random
+            from collections import defaultdict
+
+            class Graph:
+                def __init__(self):
+                    self.graph = defaultdict(list)
+
+                def add_edge(self, u, v):
+                    self.graph[u].append(v)
+
+                def bfs(self, start):
+                    visited = [False] * (max(self.graph) + 1)
+                    queue = []
+                    queue.append(start)
+                    visited[start] = True
+                    bfs_traversal = []
+                    while queue:
+                        start = queue.pop(0)
+                        bfs_traversal.append(start)
+                        for neighbour in self.graph[start]:
+                            if not visited[neighbour]:
+                                queue.append(neighbour)
+                                visited[neighbour] = True
+                    return bfs_traversal
+
+                def dfs_util(self, start, visited, dfs_traversal):
+                    visited[start] = True
+                    dfs_traversal.append(start)
+                    for neighbour in self.graph[start]:
+                        if not visited[neighbour]:
+                            self.dfs_util(neighbour, visited, dfs_traversal)
+
+                def dfs(self, start):
+                    visited = [False] * (max(self.graph) + 1)
+                    dfs_traversal = []
+                    self.dfs_util(start, visited, dfs_traversal)
+                    return dfs_traversal
+
+            def generate_random_graph(num_nodes, edge_prob):
+                graph = Graph()
+                for u in range(num_nodes):
+                    for v in range(num_nodes):
+                        if u != v and random.random() < edge_prob:
+                            graph.add_edge(u, v)
+                return graph
+
+            def main():
+                graph = generate_random_graph(10, 0.3)
+                bfs_traversal = graph.bfs(0)
+                dfs_traversal = graph.dfs(0)
+                print("BFS Traversal:", bfs_traversal)
+                print("DFS Traversal:", dfs_traversal)
+
+            if __name__ == "__main__":
+                main()
+        </div>
+    </div>
+
+    <div id="controls">
+        <button class="button" onclick="generateRandomGraph()">Generate Random Graph</button>
+        <button class="button" onclick="performBFS()">BFS Traversal</button>
+        <button class="button" onclick="performDFS()">DFS Traversal</button>
+        <div id="output"></div>
+    </div>
+
+    <canvas id="graphCanvas" width="800" height="500"></canvas>
+
+    <script>
+        let graphData;
+
+        function generateRandomGraph() {
+            const canvas = document.getElementById('graphCanvas');
+            const context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            const numNodes = Math.floor(Math.random() * 8) + 3; // Random number of nodes between 3 and 10
+            const nodes = [];
+            const edges = [];
+            const radius = 20;
+
+            // Generate random nodes
+            for (let i = 0; i < numNodes; i++) {
+                const x = Math.random() * (canvas.width - 2 * radius) + radius;
+                const y = Math.random() * (canvas.height - 2 * radius) + radius;
+                nodes.push({ x, y, label: i.toString() }); // Assigning numbers as labels to nodes
+            }
+
+            // Generate random edges
+            for (let i = 0; i < numNodes; i++) {
+                for (let j = i + 1; j < numNodes; j++) {
+                    if (Math.random() < 0.5) {
+                        edges.push({ source: i, target: j });
+                    }
+                }
+            }
+
+            // Draw nodes with labels
+            for (const node of nodes) {
+                context.beginPath();
+                context.arc(node.x, node.y, radius, 0, 2 * Math.PI);
+                context.fillStyle = 'lightblue';
+                context.fill();
+                context.stroke();
+
+                context.fillStyle = 'black';
+                context.font = '16px Arial';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillText(node.label, node.x, node.y);
+            }
+
+            // Draw edges
+            for (const edge of edges) {
+                const sourceNode = nodes[edge.source];
+                const targetNode = nodes[edge.target];
+                context.beginPath();
+                context.moveTo(sourceNode.x, sourceNode.y);
+                context.lineTo(targetNode.x, targetNode.y);
+                context.stroke();
+            }
+
+            graphData = { nodes, edges };
+        }
+
+        function performBFS() {
+            if (!graphData) {
+                alert('Please generate a graph first.');
+                return;
+            }
+
+            const startNode = 0;
+            const visited = new Set();
+            const queue = [startNode];
+            const bfsOrder = [];
+
+            while (queue.length > 0) {
+                const currentNode = queue.shift();
+                if (!visited.has(currentNode)) {
+                    visited.add(currentNode);
+                    bfsOrder.push(currentNode);
+                    for (const edge of graphData.edges) {
+                        if (edge.source === currentNode && !visited.has(edge.target)) {
+                            queue.push(edge.target);
+                        }
+                    }
+                }
+            }
+
+            document.getElementById('output').innerText = `BFS Traversal Order: ${bfsOrder.join(' -> ')}`;
+        }
+
+        function performDFS() {
+            if (!graphData) {
+                alert('Please generate a graph first.');
+                return;
+            }
+
+            const startNode = 0;
+            const visited = new Set();
+            const dfsOrder = [];
+
+            function dfsTraversal(node) {
+                visited.add(node);
+                dfsOrder.push(node);
+                for (const edge of graphData.edges) {
+                    if (edge.source === node && !visited.has(edge.target)) {
+                        dfsTraversal(edge.target);
+                    }
+                }
+            }
+
+            dfsTraversal(startNode);
+            document.getElementById('output').innerText = `DFS Traversal Order: ${dfsOrder.join(' -> ')}`;
+        }
+    </script>
+</body>
+</html>

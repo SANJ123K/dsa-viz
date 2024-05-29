@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heap Sort Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+        #controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <label for="speed">Speed:</label>
+        <input type="range" id="speed" name="speed" min="1" max="10" value="5">
+        <span id="speed-display">5</span>
+    </div>
+
+    <script>
+        let values = [];
+        let speed = 50;
+        let nodes = [];
+        let arrows = [];
+
+        function setup() {
+            createCanvas(800, 400);
+            generateHeap();
+            frameRate(60);
+            heapSort();
+        }
+
+        function generateHeap() {
+            values = new Array(floor(width / 20));
+            for (let i = 0; i < values.length; i++) {
+                values[i] = random(height / 2);
+            }
+            for (let i = 0; i < values.length; i++) {
+                nodes.push({ x: i * 30 + 50, y: (height / 2) + (values[i] * 3), val: values[i] });
+            }
+            let depth = log2(nodes.length);
+            for (let i = 0; i < nodes.length; i++) {
+                if (2 * i + 1 < nodes.length) {
+                    arrows.push({ from: nodes[i], to: nodes[2 * i + 1] });
+                }
+                if (2 * i + 2 < nodes.length) {
+                    arrows.push({ from: nodes[i], to: nodes[2 * i + 2] });
+                }
+            }
+        }
+
+        function heapSort() {
+            for (let i = nodes.length - 1; i > 0; i--) {
+                swap(0, i);
+                maxHeapify(0, i);
+                redrawHeap();
+                sleep(1000 - speed * 90);
+            }
+        }
+
+        function maxHeapify(index, size) {
+            let left = 2 * index + 1;
+            let right = 2 * index + 2;
+            let largest = index;
+            if (left < size && nodes[left].val > nodes[largest].val) {
+                largest = left;
+            }
+            if (right < size && nodes[right].val > nodes[largest].val) {
+                largest = right;
+            }
+            if (largest !== index) {
+                swap(index, largest);
+                maxHeapify(largest, size);
+            }
+        }
+
+        function swap(i, j) {
+            let temp = nodes[i];
+            nodes[i] = nodes[j];
+            nodes[j] = temp;
+        }
+
+        function redrawHeap() {
+            background(240);
+            for (let arrow of arrows) {
+                drawArrow(arrow.from.x, arrow.from.y, arrow.to.x, arrow.to.y);
+            }
+            for (let node of nodes) {
+                fill(255);
+                ellipse(node.x, node.y, 20, 20);
+                fill(0);
+                textAlign(CENTER, CENTER);
+                text(node.val, node.x, node.y);
+            }
+        }
+
+        function drawArrow(x1, y1, x2, y2) {
+            let dx = x2 - x1;
+            let dy = y2 - y1;
+            let angle = atan2(dy, dx);
+            push();
+            translate(x1, y1);
+            rotate(angle);
+            let arrowSize = 5;
+            line(0, 0, dist(x1, y1, x2, y2) - arrowSize, 0);
+            line(dist(x1, y1, x2, y2) - arrowSize, 0, dist(x1, y1, x2, y2) - arrowSize, arrowSize);
+            line(dist(x1, y1, x2, y2) - arrowSize, 0, dist(x1, y1, x2, y2), 0);
+            pop();
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        document.getElementById("speed").addEventListener("input", function () {
+            speed = this.value;
+            document.getElementById("speed-display").innerText = speed;
+        });
+    </script>
+</body>
+</html>

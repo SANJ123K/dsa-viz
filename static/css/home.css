@@ -1,0 +1,66 @@
+/* your_page_styles.css */
+
+.hero {
+    background: url("static/background.jpg") no-repeat center center/cover;
+    color: #d3d3d3;
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin: 0;
+}
+
+.hero p {
+    font-size: 24px;
+    margin: 20px 0;
+}
+
+.features {
+    padding: 50px 20px;
+    text-align: center;
+    background: #f9f9f9;
+}
+
+.features h2 {
+    font-size: 36px;
+    margin-bottom: 30px;
+}
+
+.features .feature-list {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.features .feature {
+    width: 30%;
+    margin-bottom: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.features .feature:hover {
+    transform: scale(1.05);
+}
+
+.features .feature img {
+    width: 100%;
+    height: 250px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.features .feature h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.features .feature p {
+    font-size: 16px;
+}

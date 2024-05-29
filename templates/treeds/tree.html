@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree Data Structure Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #E0E0E0;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+        #tree-info {
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        #tree-info span {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .code-section {
+            margin: 20px;
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .code {
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="tree-info">
+        <span>Data Structure: Binary Tree</span>
+        <br>
+        <span>Explanation:</span> A binary tree is a hierarchical data structure in which each node has at most two children, referred to as the left child and the right child.
+        <br>
+        <span>Time Complexity:</span> O(n) for traversal
+    </div>
+
+    <div class="code-section">
+        <span>Python Code:</span>
+        <div class="code">
+            class Node:
+                def __init__(self, key):
+                    self.left = None
+                    self.right = None
+                    self.val = key
+
+            def inorder_traversal(root):
+                if root:
+                    inorder_traversal(root.left)
+                    print(root.val, end=' ')
+                    inorder_traversal(root.right)
+
+            # Example usage
+            root = Node(1)
+            root.left = Node(2)
+            root.right = Node(3)
+            root.left.left = Node(4)
+            root.left.right = Node(5)
+            inorder_traversal(root)  # Output: 4 2 5 1 3
+        </div>
+    </div>
+
+    <div id="controls">
+        <label for="depth">Depth:</label>
+        <input type="range" id="depth" name="depth" min="1" max="5" value="3">
+        <span id="depth-display">3</span>
+    </div>
+
+    <script>
+        let tree;
+        let depth;
+
+        class Node {
+            constructor(value, x, y) {
+                this.value = value;
+                this.x = x;
+                this.y = y;
+                this.left = null;
+                this.right = null;
+            }
+
+            addLeft(child) {
+                this.left = child;
+            }
+
+            addRight(child) {
+                this.right = child;
+            }
+        }
+
+        function setup() {
+            createCanvas(800, 400);
+            depth = parseInt(document.getElementById("depth").value);
+            tree = createTree(depth, width / 2, 50, 200);
+            frameRate(1);
+        }
+
+        function createTree(depth, x, y, hSpacing) {
+            if (depth === 0) return null;
+            let root = new Node(floor(random(1, 100)), x, y);
+            root.addLeft(createTree(depth - 1, x - hSpacing / 2, y + 50, hSpacing / 2));
+            root.addRight(createTree(depth - 1, x + hSpacing / 2, y + 50, hSpacing / 2));
+            return root;
+        }
+
+        function drawTree(node) {
+            if (node === null) return;
+            fill(255);
+            stroke(0);
+            ellipse(node.x, node.y, 40, 40);
+            fill(0);
+            textAlign(CENTER, CENTER);
+            text(node.value, node.x, node.y);
+            if (node.left !== null) {
+                line(node.x, node.y, node.left.x, node.left.y);
+                drawTree(node.left);
+            }
+            if (node.right !== null) {
+                line(node.x, node.y, node.right.x, node.right.y);
+                drawTree(node.right);
+            }
+        }
+
+        function draw() {
+            background(224);
+            drawTree(tree);
+        }
+
+        document.getElementById("depth").addEventListener("input", function() {
+            document.getElementById("depth-display").innerText = this.value;
+            depth = parseInt(this.value);
+            tree = createTree(depth, width / 2, 50, 200);
+        });
+    </script>
+</body>
+</html>

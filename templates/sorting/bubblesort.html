@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Algorithm Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction:column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #E0E0E0;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+        #sort-info {
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        #sort-info span {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .code-section {
+            margin: 20px;
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .code {
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="sort-info">
+        <span>Sorting Algorithm: Bubble Sort</span>
+        <br>
+        <span>Explanation:</span> Bubble Sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements, and swaps them if they are in the wrong order.
+        <br>
+        <span>Time Complexity:</span> O(n^2)
+    </div>
+
+    <div class="code-section">
+        <span>Python Code:</span>
+        <div class="code">
+            def bubble_sort(arr):
+                n = len(arr)
+                for i in range(n):
+                    for j in range(0, n-i-1):
+                        if arr[j] > arr[j+1]:
+                            arr[j], arr[j+1] = arr[j+1], arr[j]
+
+            # Example usage
+            arr = [64, 34, 25, 12, 22, 11, 90]
+            bubble_sort(arr)
+            print("Sorted array:", arr)
+        </div>
+    </div>
+
+    <div id="controls">
+        <label for="speed">Speed:</label>
+        <input type="range" id="speed" name="speed" min="1" max="10" value="5">
+        <span id="speed-display">5</span>
+    </div>
+
+    <script>
+        let values = [];
+        let i = 0;
+        let j = 0;
+        let w = 10;
+        let sorting = true;
+
+        function setup() {
+            createCanvas(800, 400);
+            values = new Array(floor(width / w));
+            for (let i = 0; i < values.length; i++) {
+                values[i] = random(height);
+            }
+            frameRate(5); // Initial frame rate
+            bubbleSort(values);
+        }
+
+        async function bubbleSort(arr) {
+            while (true) {
+                if (sorting) {
+                    for (let i = 0; i < arr.length; i++) {
+                        for (let j = 0; j < arr.length - i - 1; j++) {
+                            if (arr[j] > arr[j + 1]) {
+                                await swap(arr, j, j + 1);
+                            }
+                        }
+                    }
+                } else {
+                    await sleep(100); // Pause the loop
+                }
+            }
+        }
+
+        async function swap(arr, a, b) {
+            let temp = arr[a];
+            arr[a] = arr[b];
+            arr[b] = temp;
+            await sleep(1100 - document.getElementById("speed").value * 100); // Adjust delay based on speed
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function draw() {
+            background(224);
+            for (let i = 0; i < values.length; i++) {
+                stroke(0);
+                fill(76, 175, 80);
+                rect(i * w, height - values[i], w, values[i]);
+            }
+        }
+
+        document.getElementById("speed").addEventListener("input", function() {
+            document.getElementById("speed-display").innerText = this.value;
+        });
+    </script>
+</body>
+</html>

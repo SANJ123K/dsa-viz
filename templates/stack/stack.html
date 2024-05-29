@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Data Structure Visualization</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #E0E0E0;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+        #stack-info {
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        #stack-info span {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .code-section {
+            margin: 20px;
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .code {
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+        }
+        #controls {
+            margin: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color:green;
+            border-radius:5px;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: red;
+        }
+        #container {
+            width: 200px;
+            height: 400px;
+            border: 2px solid #000;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            justify-content: flex-start;
+            overflow: hidden;
+            position: relative;
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .box {
+            width: 180px;
+            height: 35px;
+            background-color: lightblue;
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="stack-info">
+        <span>Data Structure: Stack</span>
+        <br>
+        <span>Explanation:</span> A stack is a linear data structure that follows the Last In, First Out (LIFO) principle. This means the last element added to the stack will be the first one to be removed. It is analogous to a stack of plates where you can only add or remove the top plate.
+        <br>
+        <span>Operations:</span>
+        <ul>
+            <li><strong>Push:</strong> Adds an element to the top of the stack. If the stack is full (can only hold 10 elements), an overflow condition occurs.</li>
+            <li><strong>Pop:</strong> Removes the top element of the stack. If the stack is empty, an underflow condition occurs.</li>
+        </ul>
+    </div>
+
+    <div class="code-section">
+        <span>Python Code:</span>
+        <div class="code">
+            # Stack implementation in Python
+
+            class Stack:
+                def __init__(self):
+                    self.items = []
+
+                def push(self, item):
+                    self.items.append(item)
+
+                def pop(self):
+                    if not self.is_empty():
+                        return self.items.pop()
+                    else:
+                        return None
+
+                def is_empty(self):
+                    return len(self.items) == 0
+
+                def peek(self):
+                    if not self.is_empty():
+                        return self.items[-1]
+                    else:
+                        return None
+
+                def size(self):
+                    return len(self.items)
+
+            # Example usage
+            stack = Stack()
+            stack.push(1)
+            stack.push(2)
+            stack.push(3)
+            print(stack.pop())  # Output: 3
+            print(stack.peek())  # Output: 2
+        </div>
+    </div>
+
+    <div id="container"></div>
+    <div id="controls">
+        <button class="button" onclick="push()">Push</button>
+        <button class="button" onclick="pop()">Pop</button>
+        <div id="message"></div>
+    </div>
+
+
+
+    <script>
+        const container = document.getElementById('container');
+        const message = document.getElementById('message');
+        let stack = [];
+        const MAX_SIZE = 10;
+
+        function push() {
+            message.innerText = '';
+            if (stack.length >= MAX_SIZE) {
+                message.innerText = 'Stack Overflow';
+                return;
+            }
+            const newValue = stack.length + 1;
+            const newBox = document.createElement('div');
+            newBox.className = 'box';
+            newBox.innerText = newValue;
+            container.appendChild(newBox);
+            stack.push(newValue);
+        }
+
+        function pop() {
+            message.innerText = '';
+            if (stack.length === 0) {
+                message.innerText = 'Stack Underflow';
+                return;
+            }
+            const lastBox = container.lastElementChild;
+            container.removeChild(lastBox);
+            stack.pop();
+        }
+    </script>
+</body>
+</html>
